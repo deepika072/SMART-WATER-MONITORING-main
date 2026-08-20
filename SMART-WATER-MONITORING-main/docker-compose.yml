@@ -1,0 +1,16 @@
+services:
+
+  backend:
+    build: ./Backend
+    container_name: smart-water-backend
+    ports:
+      -  "5001:5000"
+
+  frontend:
+    build: ./Frontend
+    container_name: smart-water-frontend
+    ports:
+      - "8081:80"
+
+    depends_on:
+      - backend

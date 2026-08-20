@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SmartWater Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f6f9fd;
+            color: #15233a;
+        }
+
+        /* ================= HEADER ================= */
+
+        .topbar {
+            height: 86px;
+            background: linear-gradient(100deg, #1768d8, #0f5fc4);
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 36px;
+
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .brand {
+            font-size: 34px;
+            font-weight: bold;
+        }
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 45px;
+            font-size: 26px;
+        }
+
+        .live {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: bold;
+        }
+
+        .live-dot {
+            width: 17px;
+            height: 17px;
+            background: #35c76b;
+            border-radius: 50%;
+            box-shadow: 0 0 0 5px rgba(53,199,107,0.2);
+        }
+
+        .admin {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-icon {
+            font-size: 35px;
+        }
+
+        /* ================= MAIN LAYOUT ================= */
+
+        .layout {
+            display: grid;
+            grid-template-columns: 313px 1fr;
+            min-height: calc(100vh - 86px);
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            background: white;
+            border-right: 1px solid #e4eaf2;
+
+            padding: 42px 22px 25px;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 17px;
+
+            color: #1264d8;
+            font-size: 29px;
+            font-weight: 600;
+
+            margin: 0 15px 42px;
+        }
+
+        .logo-icon {
+            font-size: 47px;
+        }
+
+        .navigation {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+
+            padding: 18px;
+
+            border-radius: 10px;
+
+            font-size: 21px;
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .nav-item:hover {
+            background: #edf4ff;
+            color: #075fd1;
+        }
+
+        .nav-item.active {
+            background: #e6f0ff;
+            color: #075fd1;
+            font-weight: bold;
+        }
+
+        .nav-icon {
+            width: 30px;
+            text-align: center;
+            font-size: 27px;
+        }
+
+        .online {
+            margin-top: auto;
+
+            border: 1px solid #e8edf5;
+            border-radius: 10px;
+
+            padding: 18px;
+
+            display: flex;
+            align-items: center;
+            gap: 17px;
+
+            color: #159b50;
+
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .online-dot {
+            width: 21px;
+            height: 21px;
+
+            background: #35c66c;
+            border-radius: 50%;
+
+            box-shadow: 0 0 0 7px rgba(53,198,108,0.15);
+        }
+
+        /* ================= CONTENT ================= */
+
+        main {
+            padding: 24px;
+        }
+
+        .dashboard {
+            background: white;
+
+            border: 1px solid #e4eaf2;
+            border-radius: 11px;
+
+            min-height: calc(100vh - 134px);
+
+            padding: 31px 22px;
+        }
+
+        .greeting {
+            font-size: 31px;
+            font-weight: bold;
+
+            margin: 0 14px 5px;
+        }
+
+        .subtitle {
+            font-size: 24px;
+            color: #405069;
+
+            margin: 0 14px 35px;
+        }
+
+        /* ================= SENSOR CARDS ================= */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 23px;
+
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background: white;
+
+            border: 1px solid #e4eaf2;
+            border-radius: 11px;
+
+            padding: 25px;
+
+            min-height: 141px;
+
+            box-shadow: 0 2px 7px rgba(23,43,77,0.03);
+        }
+
+        .metric {
+            display: flex;
+            align-items: center;
+            gap: 19px;
+        }
+
+        .circle {
+            width: 81px;
+            height: 81px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 31px;
+
+            flex-shrink: 0;
+        }
+
+        .blue {
+            background: #e8f1ff;
+            color: #0865df;
+        }
+
+        .green {
+            background: #e4f7ed;
+            color: #1ba25b;
+        }
+
+        .purple {
+            background: #eee8ff;
+            color: #7650d8;
+        }
+
+        .orange {
+            background: #fff0e6;
+            color: #ed7112;
+        }
+
+        .label {
+            font-size: 19px;
+            margin-bottom: 8px;
+        }
+
+        .value {
+            font-size: 35px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .unit {
+            font-size: 19px;
+            margin-left: 4px;
+        }
+
+        /* ================= MIDDLE SECTION ================= */
+
+        .middle {
+            display: grid;
+
+            grid-template-columns: 2fr 1.15fr;
+
+            gap: 18px;
+        }
+
+        .section {
+            border: 1px solid #e4eaf2;
+            border-radius: 11px;
+
+            background: white;
+
+            min-height: 345px;
+
+            padding: 25px;
+        }
+
+        .section-title {
+            font-size: 23px;
+            font-weight: bold;
+
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            margin-bottom: 18px;
+        }
+
+        /* ================= CHART ================= */
+
+        .chart-container {
+            width: 100%;
+            height: 230px;
+        }
+
+        .chart {
+            width: 100%;
+            height: 100%;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+
+            gap: 35px;
+
+            font-size: 16px;
+
+            margin-top: 4px;
+        }
+
+        /* ================= ALERT ================= */
+
+        .alert-box {
+            height: 265px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 18px;
+
+            color: #159d52;
+
+            font-size: 25px;
+        }
+
+        .check {
+            width: 59px;
+            height: 59px;
+
+            border: 4px solid #24a75e;
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 32px;
+        }
+
+        /* ================= BOTTOM CARDS ================= */
+
+        .bottom {
+            display: grid;
+
+            grid-template-columns: repeat(4, 1fr);
+
+            gap: 18px;
+
+            margin-top: 28px;
+        }
+
+        .bottom .card {
+            min-height: 145px;
+            padding: 24px 22px;
+        }
+
+        .progress {
+            width: 100%;
+            height: 9px;
+
+            background: #e8edf4;
+
+            border-radius: 10px;
+
+            margin-top: 18px;
+
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .treatment-bar {
+            width: 96%;
+            background: #1669e4;
+        }
+
+        .reservoir-bar {
+            width: 78%;
+            background: #20aa61;
+        }
+
+        .flow-bar {
+            width: 78%;
+            background: #8a62df;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media(max-width:1100px) {
+
+            .layout {
+                grid-template-columns: 230px 1fr;
+            }
+
+            .cards,
+            .bottom {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .middle {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:720px) {
+
+            .topbar {
+                height: auto;
+                padding: 18px;
+            }
+
+            .brand {
+                font-size: 24px;
+            }
+
+            .top-right {
+                font-size: 17px;
+                gap: 15px;
+            }
+
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            main {
+                padding: 10px;
+            }
+
+            .cards,
+            .bottom {
+                grid-template-columns: 1fr;
+            }
+
+            .greeting {
+                font-size: 25px;
+            }
+
+            .subtitle {
+                font-size: 19px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+
+<header class="topbar">
+
+    <div class="brand">
+        SmartWater / Dashboard
+    </div>
+
+    <div class="top-right">
+
+        <div class="live">
+            <span class="live-dot"></span>
+            LIVE
+        </div>
+
+        <div class="admin">
+            <span class="admin-icon">♟</span>
+            Admin
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- ================= MAIN LAYOUT ================= -->
+
+<div class="layout">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <span class="logo-icon">♢</span>
+
+            SmartWater
+
+        </div>
+
+
+        <nav class="navigation">
+
+            <div class="nav-item active" onclick="showDashboard()">
+                <span class="nav-icon">⌂</span>
+                Dashboard
+            </div>
+
+            <div class="nav-item" onclick="showWaterQuality()">
+                <span class="nav-icon">♧</span>
+                Water Quality
+            </div>
+
+            <div class="nav-item" onclick="showTreatment()">
+                <span class="nav-icon">⚙</span>
+                Treatment
+            </div>
+
+            <div class="nav-item" onclick="showChemicals()">
+                <span class="nav-icon">⚗</span>
+                Chemicals
+            </div>
+
+            <div class="nav-item" onclick="showMaintenance()">
+                <span class="nav-icon">⚒</span>
+                Maintenance
+            </div>
+
+            <div class="nav-item" onclick="showReports()">
+                <span class="nav-icon">▥</span>
+                Reports
+            </div>
+
+        </nav>
+
+
+        <div class="online">
+
+            <span class="online-dot"></span>
+
+            Online
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= DASHBOARD ================= -->
+
+    <main>
+
+        <div class="dashboard" id="content">
+
+            <div class="greeting">
+                GOOD MORNING
+            </div>
+
+            <div class="subtitle">
+                Water Plant Overview
+            </div>
+
+
+            <!-- ================= SENSOR CARDS ================= -->
+
+            <div class="cards">
+
+                <!-- pH -->
+
+                <div class="card">
+
+                    <div class="metric">
+
+                        <div class="circle blue">
+                            pH
+                        </div>
+
+                        <div>
+
+                            <div class="label">
+                                pH
+                            </div>
+
+                            <div class="value">
+                                7.2
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TURBIDITY -->
+
+                <div class="card">
+
+                    <div class="metric">
+
+                        <div class="circle green">
+                            ⚗
+                        </div>
+
+                        <div>
+
+                            <div class="label">
+                                Turbidity
+                            </div>
+
+                            <div class="value">
+                                2.1
+                                <span class="unit">
+                                    NTU
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CHLORINE -->
+
+                <div class="card">
+
+                    <div class="metric">
+
+                        <div class="circle purple">
+                            ⚗
+                        </div>
+
+                        <div>
+
+                            <div class="label">
+                                Chlorine
+                            </div>
+
+                            <div class="value">
+                                1.2
+                                <span class="unit">
+                                    mg/L
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TEMPERATURE -->
+
+                <div class="card">
+
+                    <div class="metric">
+
+                        <div class="circle orange">
+                            ♨
+                        </div>
+
+                        <div>
+
+                            <div class="label">
+                                Temperature
+                            </div>
+
+                            <div class="value">
+                                26
+                                <span class="unit">
+                                    °C
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= MIDDLE ================= -->
+
+            <div class="middle">
+
+
+                <!-- WATER QUALITY TREND -->
+
+                <section class="section">
+
+                    <div class="section-title">
+                        ▥
+                        Water Quality Trend
+                    </div>
+
+
+                    <div class="chart-container">
+
+                        <svg
+                            class="chart"
+                            viewBox="0 0 760 260"
+                            preserveAspectRatio="none"
+                        >
+
+                            <!-- GRID -->
+
+                            <g
+                                stroke="#e5eaf1"
+                                stroke-width="1"
+                            >
+
+                                <line
+                                    x1="45"
+                                    y1="20"
+                                    x2="740"
+                                    y2="20"
+                                />
+
+                                <line
+                                    x1="45"
+                                    y1="67"
+                                    x2="740"
+                                    y2="67"
+                                />
+
+                                <line
+                                    x1="45"
+                                    y1="114"
+                                    x2="740"
+                                    y2="114"
+                                />
+
+                                <line
+                                    x1="45"
+                                    y1="161"
+                                    x2="740"
+                                    y2="161"
+                                />
+
+                                <line
+                                    x1="45"
+                                    y1="208"
+                                    x2="740"
+                                    y2="208"
+                                />
+
+                            </g>
+
+
+                            <!-- Y AXIS -->
+
+                            <g
+                                font-size="14"
+                                fill="#26364d"
+                            >
+
+                                <text x="8" y="24">
+                                    10
+                                </text>
+
+                                <text x="8" y="71">
+                                    8
+                                </text>
+
+                                <text x="8" y="118">
+                                    6
+                                </text>
+
+                                <text x="8" y="165">
+                                    4
+                                </text>
+
+                                <text x="8" y="212">
+                                    2
+                                </text>
+
+                                <text x="8" y="245">
+                                    0
+                                </text>
+
+                            </g>
+
+
+                            <!-- pH LINE -->
+
+                            <polyline
+                                fill="none"
+                                stroke="#1768e5"
+                                stroke-width="3"
+                                points="
+                                50,58
+                                160,49
+                                270,48
+                                380,54
+                                490,59
+                                600,59
+                                710,52"
+                            />
+
+
+                            <!-- TURBIDITY -->
+
+                            <polyline
+                                fill="none"
+                                stroke="#20aa61"
+                                stroke-width="3"
+                                points="
+                                50,171
+                                160,171
+                                270,171
+                                380,171
+                                490,171
+                                600,171
+                                710,171"
+                            />
+
+
+                            <!-- CHLORINE -->
+
+                            <polyline
+                                fill="none"
+                                stroke="#7650d8"
+                                stroke-width="3"
+                                points="
+                                50,208
+                                160,210
+                                270,210
+                                380,210
+                                490,210
+                                600,210
+                                710,210"
+                            />
+
+
+                            <!-- TEMPERATURE -->
+
+                            <polyline
+                                fill="none"
+                                stroke="#ed7414"
+                                stroke-width="3"
+                                points="
+                                50,121
+                                160,118
+                                270,118
+                                380,118
+                                490,121
+                                600,121
+                                710,121"
+                            />
+
+
+                            <!-- DATE LABELS -->
+
+                            <g
+                                font-size="14"
+                                fill="#26364d"
+                            >
+
+                                <text x="43" y="238">
+                                    7 May
+                                </text>
+
+                                <text x="150" y="238">
+                                    8 May
+                                </text>
+
+                                <text x="260" y="238">
+                                    9 May
+                                </text>
+
+                                <text x="365" y="238">
+                                    10 May
+                                </text>
+
+                                <text x="475" y="238">
+                                    11 May
+                                </text>
+
+                                <text x="585" y="238">
+                                    12 May
+                                </text>
+
+                                <text x="695" y="238">
+                                    13 May
+                                </text>
+
+                            </g>
+
+                        </svg>
+
+                    </div>
+
+
+                    <!-- LEGEND -->
+
+                    <div class="legend">
+
+                        <span>🔵 pH</span>
+
+                        <span>🟢 Turbidity</span>
+
+                        <span>🟣 Chlorine</span>
+
+                        <span>🟠 Temperature</span>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ALERTS -->
+
+                <section class="section">
+
+                    <div class="section-title">
+                        🔔
+                        Alerts
+                    </div>
+
+
+                    <div class="alert-box">
+
+                        <div class="check">
+                            ✓
+                        </div>
+
+                        All Normal
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- ================= BOTTOM CARDS ================= -->
+
+            <div class="bottom">
+
+
+                <!-- TREATMENT -->
+
+                <div class="card">
+
+                    <div class="metric">
+
+                        <div class="circle blue">
+                            ⚙
+                        </div>
+
+                        <div>
+
+                            <div class="label">
+                                Treatment
+                            </div>
+
+                            <div class="value">
+                                96
+                                <span class="unit">
+                                    %
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress">
+
+                        <div class="progress-bar treatment-bar">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RESERVOIR -->
+
+                <div class="card">
+
+                    <div class="metric">
+
+                        <div class="circle green">
+                            ▣
+                        </div>
+
+                        <div>
+
+                            <div class="label">
+                                Reservoir
+                            </div>
+
+                            <div class="value">
+                                78
+                                <span class="unit">
+                                    %
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress">
+
+                        <div class="progress-bar reservoir-bar">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FLOW RATE -->
+
+                <div class="card">
+
+                    <div class="metric">
+
+                        <div class="circle purple">
+                            ♣
+                        </div>
+
+                        <div>
+
+                            <div class="label">
+                                Flow Rate
+                            </div>
+
+                            <div class="value">
+                                152
+                                <span class="unit">
+                                    m³/h
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress">
+
+                        <div class="progress-bar flow-bar">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MAINTENANCE -->
+
+                <div class="card">
+
+                    <div class="metric">
+
+                        <div class="circle orange">
+                            ⚒
+                        </div>
+
+                        <div>
+
+                            <div class="label">
+                                Maintenance
+                            </div>
+
+                            <div class="value">
+                                1
+                                <span class="unit">
+                                    Due
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+function setActive(element) {
+
+    document
+        .querySelectorAll(".nav-item")
+        .forEach(item => {
+            item.classList.remove("active");
+        });
+
+    element.classList.add("active");
+}
+
+
+function showDashboard() {
+
+    const item = event.currentTarget;
+
+    setActive(item);
+
+    location.reload();
+}
+
+
+function showWaterQuality() {
+
+    const item = event.currentTarget;
+
+    setActive(item);
+
+    document.getElementById("content").innerHTML = `
+
+        <div class="greeting">
+            WATER QUALITY
+        </div>
+
+        <div class="subtitle">
+            Real-time water quality monitoring
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+                <div class="metric">
+                    <div class="circle blue">
+                        pH
+                    </div>
+
+                    <div>
+                        <div class="label">
+                            pH Level
+                        </div>
+
+                        <div class="value">
+                            7.2
+                        </div>
+
+                        <span style="color:#159b50">
+                            ● Normal
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="metric">
+
+                    <div class="circle green">
+                        ⚗
+                    </div>
+
+                    <div>
+
+                        <div class="label">
+                            Turbidity
+                        </div>
+
+                        <div class="value">
+                            2.1
+                            <span class="unit">
+                                NTU
+                            </span>
+                        </div>
+
+                        <span style="color:#159b50">
+                            ● Normal
+                        </span>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="metric">
+
+                    <div class="circle purple">
+                        ⚗
+                    </div>
+
+                    <div>
+
+                        <div class="label">
+                            Chlorine
+                        </div>
+
+                        <div class="value">
+                            1.2
+                            <span class="unit">
+                                mg/L
+                            </span>
+                        </div>
+
+                        <span style="color:#159b50">
+                            ● Normal
+                        </span>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="metric">
+
+                    <div class="circle orange">
+                        ♨
+                    </div>
+
+                    <div>
+
+                        <div class="label">
+                            Temperature
+                        </div>
+
+                        <div class="value">
+                            26
+                            <span class="unit">
+                                °C
+                            </span>
+                        </div>
+
+                        <span style="color:#159b50">
+                            ● Normal
+                        </span>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="section">
+
+            <div class="section-title">
+                ▥ Recent Sensor Readings
+            </div>
+
+            <table style="
+                width:100%;
+                border-collapse:collapse;
+                font-size:17px;
+            ">
+
+                <tr style="background:#f5f8fc">
+
+                    <th style="padding:15px;text-align:left">
+                        Parameter
+                    </th>
+
+                    <th style="padding:15px;text-align:left">
+                        Value
+                    </th>
+
+                    <th style="padding:15px;text-align:left">
+                        Status
+                    </th>
+
+                </tr>
+
+
+                <tr>
+                    <td style="padding:15px;border-bottom:1px solid #eee">
+                        pH
+                    </td>
+
+                    <td style="padding:15px;border-bottom:1px solid #eee">
+                        7.2
+                    </td>
+
+                    <td style="padding:15px;border-bottom:1px solid #eee;color:#159b50">
+                        Normal
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td style="padding:15px;border-bottom:1px solid #eee">
+                        Turbidity
+                    </td>
+
+                    <td style="padding:15px;border-bottom:1px solid #eee">
+                        2.1 NTU
+                    </td>
+
+                    <td style="padding:15px;border-bottom:1px solid #eee;color:#159b50">
+                        Normal
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td style="padding:15px;border-bottom:1px solid #eee">
+                        Chlorine
+                    </td>
+
+                    <td style="padding:15px;border-bottom:1px solid #eee">
+                        1.2 mg/L
+                    </td>
+
+                    <td style="padding:15px;border-bottom:1px solid #eee;color:#159b50">
+                        Normal
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td style="padding:15px">
+                        Temperature
+                    </td>
+
+                    <td style="padding:15px">
+                        26 °C
+                    </td>
+
+                    <td style="padding:15px;color:#159b50">
+                        Normal
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+    `;
+}
+
+
+function showTreatment() {
+
+    const item = event.currentTarget;
+
+    setActive(item);
+
+    document.getElementById("content").innerHTML = `
+
+        <div class="greeting">
+            TREATMENT
+        </div>
+
+        <div class="subtitle">
+            Water treatment process overview
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+
+                <div class="metric">
+
+                    <div class="circle blue">
+                        ⚙
+                    </div>
+
+                    <div>
+
+                        <div class="label">
+                            Treatment Efficiency
+                        </div>
+
+                        <div class="value">
+                            96%
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="progress">
+
+                    <div class="progress-bar treatment-bar">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="metric">
+
+                    <div class="circle green">
+                        ⚗
+                    </div>
+
+                    <div>
+
+                        <div class="label">
+                            Disinfection
+                        </div>
+
+                        <div class="value">
+                            1.2
+                            <span class="unit">
+                                mg/L
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="metric">
+
+                    <div class="circle purple">
+                        ♣
+                    </div>
+
+                    <div>
+
+                        <div class="label">
+                            Flow Rate
+                        </div>
+
+                        <div class="value">
+                            152
+                            <span class="unit">
+                                m³/h
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="metric">
+
+                    <div class="circle orange">
+                        ▣
+                    </div>
+
+                    <div>
+
+                        <div class="label">
+                            Reservoir
+                        </div>
+
+                        <div class="value">
+                            78%
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+}
+
+
+function showChemicals() {
+
+    const item = event.currentTarget;
+
+    setActive(item);
+
+    document.getElementById("content").innerHTML = `
+
+        <div class="greeting">
+            CHEMICALS
+        </div>
+
+        <div class="subtitle">
+            Chemical inventory management
+        </div>
+
+        <div class="section">
+
+            <div class="section-title">
+                ⚗ Chemical Inventory
+            </div>
+
+            <table style="
+                width:100%;
+                border-collapse:collapse;
+                font-size:17px;
+            ">
+
+                <tr style="background:#f5f8fc">
+
+                    <th style="padding:15px;text-align:left">
+                        Chemical
+                    </th>
+
+                    <th style="padding:15px;text-align:left">
+                        Stock
+                    </th>
+
+                    <th style="padding:15px;text-align:left">
+                        Unit
+                    </th>
+
+                    <th style="padding:15px;text-align:left">
+                        Status
+                    </th>
+
+                </tr>
+
+                <tr>
+                    <td style="padding:15px">
+                        Chlorine
+                    </td>
+
+                    <td style="padding:15px">
+                        820
+                    </td>
+
+                    <td style="padding:15px">
+                        kg
+                    </td>
+
+                    <td style="padding:15px;color:#159b50">
+                        Available
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding:15px">
+                        Alum
+                    </td>
+
+                    <td style="padding:15px">
+                        460
+                    </td>
+
+                    <td style="padding:15px">
+                        kg
+                    </td>
+
+                    <td style="padding:15px;color:#159b50">
+                        Available
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding:15px">
+                        Polymer
+                    </td>
+
+                    <td style="padding:15px">
+                        95
+                    </td>
+
+                    <td style="padding:15px">
+                        kg
+                    </td>
+
+                    <td style="padding:15px;color:#ed7112">
+                        Low
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+
+    `;
+}
+
+
+function showMaintenance() {
+
+    const item = event.currentTarget;
+
+    setActive(item);
+
+    document.getElementById("content").innerHTML = `
+
+        <div class="greeting">
+            MAINTENANCE
+        </div>
+
+        <div class="subtitle">
+            Equipment maintenance schedule
+        </div>
+
+        <div class="section">
+
+            <div class="section-title">
+                ⚒ Upcoming Maintenance
+            </div>
+
+            <table style="
+                width:100%;
+                border-collapse:collapse;
+                font-size:17px;
+            ">
+
+                <tr style="background:#f5f8fc">
+
+                    <th style="padding:15px;text-align:left">
+                        Equipment
+                    </th>
+
+                    <th style="padding:15px;text-align:left">
+                        Task
+                    </th>
+
+                    <th style="padding:15px;text-align:left">
+                        Due
+                    </th>
+
+                    <th style="padding:15px;text-align:left">
+                        Status
+                    </th>
+
+                </tr>
+
+                <tr>
+
+                    <td style="padding:15px">
+                        Filter Pump A
+                    </td>
+
+                    <td style="padding:15px">
+                        Inspection
+                    </td>
+
+                    <td style="padding:15px">
+                        14 Aug
+                    </td>
+
+                    <td style="padding:15px;color:#ed7112">
+                        Due
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td style="padding:15px">
+                        Chlorine Pump
+                    </td>
+
+                    <td style="padding:15px">
+                        Calibration
+                    </td>
+
+                    <td style="padding:15px">
+                        20 Aug
+                    </td>
+
+                    <td style="padding:15px;color:#159b50">
+                        Scheduled
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td style="padding:15px">
+                        Flow Sensor
+                    </td>
+
+                    <td style="padding:15px">
+                        Testing
+                    </td>
+
+                    <td style="padding:15px">
+                        25 Aug
+                    </td>
+
+                    <td style="padding:15px;color:#159b50">
+                        Scheduled
+                    </td>
+
+                </tr>
+
+            </table>
+
+        </div>
+
+    `;
+}
+
+
+function showReports() {
+
+    const item = event.currentTarget;
+
+    setActive(item);
+
+    document.getElementById("content").innerHTML = `
+
+        <div class="greeting">
+            REPORTS
+        </div>
+
+        <div class="subtitle">
+            Generate water plant reports
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+
+                <div class="section-title">
+                    📊
+                    Water Quality Report
+                </div>
+
+                <p style="color:#526177;line-height:1.6">
+
+                    Generate a report containing
+                    pH, turbidity, chlorine and
+                    temperature readings.
+
+                </p>
+
+                <button
+                    onclick="generateReport()"
+                    style="
+                        margin-top:20px;
+                        padding:12px 20px;
+                        border:none;
+                        border-radius:8px;
+                        background:#1768d8;
+                        color:white;
+                        font-size:16px;
+                        cursor:pointer;
+                    "
+                >
+                    Generate Report
+                </button>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="section-title">
+                    ⚒
+                    Maintenance Report
+                </div>
+
+                <p style="color:#526177;line-height:1.6">
+
+                    Generate a report containing
+                    scheduled and completed
+                    maintenance activities.
+
+                </p>
+
+                <button
+                    onclick="generateReport()"
+                    style="
+                        margin-top:20px;
+                        padding:12px 20px;
+                        border:none;
+                        border-radius:8px;
+                        background:#1768d8;
+                        color:white;
+                        font-size:16px;
+                        cursor:pointer;
+                    "
+                >
+                    Generate Report
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+}
+
+
+function generateReport() {
+
+    alert("Report generated successfully!");
+
+}
+
+</script>
+
+</body>
+</html>
