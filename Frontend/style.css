@@ -91,7 +91,7 @@ nav {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
-    background: #bc0adf;
+    
 }
 
 .topbar h1 {
@@ -119,7 +119,7 @@ nav {
     width: 42px;
     height: 42px;
     border-radius: 50%;
-    background: #fa23d9;
+    background: #ae1297;
     color: white;
     display: flex;
     justify-content: center;
