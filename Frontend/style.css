@@ -91,7 +91,7 @@ nav {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
-    background: #add8e6;
+    background: #bc0adf;
 }
 
 .topbar h1 {
@@ -258,7 +258,7 @@ nav {
 .alert-item {
     padding: 13px;
     background: #fff1f1;
-    color: #d22e2e;
+    color: #b73535;
     border-left: 4px solid #e24a4a;
     margin-bottom: 8px;
     border-radius: 5px;
